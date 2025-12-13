@@ -1,64 +1,15 @@
 venv/
+.venv/
+env/
 
-.env
-.env.local
-
-#Python and django
-__pycache__/
+#Python and django__pycache__/
 *.py[cod]
 *$py.class
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-eggs/
-.eggs/
 
 
-
-#DB
-db.sqlite3
-*.sqlite3
-staticfiles/
-static/
-
-
-#React
-node_modules/
-frontend/dist/
-dist/
-.vite/
-
-
-#vscode
-.vscode/
-!.vscode/extensions.json
-!.vscode/settings.json.example
-
-
-#Reports
-.coverage
-.coverage.*
-htmlcov/
-.pytest_cache/
-.tox/
-coverage/
-
-
-#Logs
-*.log
-logs/
-npm-debug.log*
-
-#Temp files
-tmp/
-temp/
-*.tmp
-*.temp
-
-
-#docker_volm
-postgres_data/
-redis_data/
-
+#env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
