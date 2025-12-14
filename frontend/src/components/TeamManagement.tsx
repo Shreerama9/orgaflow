@@ -1,4 +1,7 @@
-
+/**
+ * Team Management Component - Admin/Owner can invite, remove, and manage members.
+ * Shows current team with role controls.
+ */
 
 import React, { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';

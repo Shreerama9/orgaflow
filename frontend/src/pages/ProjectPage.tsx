@@ -1,4 +1,7 @@
-
+/**
+ * Project Detail Page - Task board with Kanban columns and drag-and-drop.
+ * Shows tasks organized by status with create/edit functionality.
+ */
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

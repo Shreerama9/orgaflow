@@ -1,4 +1,7 @@
-
+/**
+ * Login Page - User authentication with email, password, and company UID.
+ * Enhanced signup with organization create/join options.
+ */
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -54,20 +57,16 @@ export const LoginPage: React.FC = () => {
     
     try {
       if (isSignup) {
-        // Create user account first
         await signup(data.email, data.password, data.fullName);
         
-        // Login to get token for creating/joining org
         await login(data.email, data.password);
 
         if (orgChoice === 'create') {
-          // User is creating a new organization
           if (!data.orgName) {
             setError('Organization name is required');
             return;
           }
           
-          // Create the organization (user becomes Owner)
           await createOrganization({
             variables: {
               name: data.orgName,
@@ -115,12 +114,11 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-surface-50">
       <div className="w-full max-w-md">
-        {/* Logo & Title */}
         <div className="text-center mb-8">
           <img 
-            src="/assets/logo.png" 
+            src="../../assets/logo_orgaflow.png" 
             alt="OrgaFlow" 
-            className="h-16 mx-auto mb-4"
+            className="h-28 mx-auto mb-4"
           />
           <p className="text-surface-500 mt-2">
             {isSignup ? 'Create your account' : 'Sign in to your account'}
@@ -180,7 +178,7 @@ export const LoginPage: React.FC = () => {
               </div>
             )}
 
-            {/* Organization Choice - Only show during signup */}
+            {/* Organization Choice */}
             {isSignup && (
               <div className="space-y-3">
                 <label className="block text-sm font-medium text-slate-300">
@@ -199,10 +197,10 @@ export const LoginPage: React.FC = () => {
                     }`}
                   >
                     <Building2 className={`w-6 h-6 mb-2 ${
-                      orgChoice === 'create' ? 'text-primary-400' : 'text-slate-400'
+                      orgChoice === 'create' ? 'text-primary-500' : 'text-slate-400'
                     }`} />
                     <div className={`font-medium ${
-                      orgChoice === 'create' ? 'text-primary-300' : 'text-slate-200'
+                      orgChoice === 'create' ? 'text-primary-500' : 'text-slate-700'
                     }`}>
                       Create New
                     </div>
@@ -222,10 +220,10 @@ export const LoginPage: React.FC = () => {
                     }`}
                   >
                     <Users className={`w-6 h-6 mb-2 ${
-                      orgChoice === 'join' ? 'text-primary-400' : 'text-slate-400'
+                      orgChoice === 'join' ? 'text-primary-500' : 'text-slate-500'
                     }`} />
                     <div className={`font-medium ${
-                      orgChoice === 'join' ? 'text-primary-300' : 'text-slate-200'
+                      orgChoice === 'join' ? 'text-primary-500' : 'text-slate-700'
                     }`}>
                       Join Existing
                     </div>
@@ -237,7 +235,7 @@ export const LoginPage: React.FC = () => {
                 
                 {/* Create Org Form */}
                 {orgChoice === 'create' && (
-                  <div className="space-y-3 mt-3 p-3 bg-slate-800/50 rounded-lg">
+                  <div className="space-y-3 mt-3 p-3 bg-primary-300 rounded-lg">
                     <Input
                       label="Organization Name"
                       placeholder="Acme Inc."
@@ -254,13 +252,13 @@ export const LoginPage: React.FC = () => {
                 
                 {/* Join Org Form */}
                 {orgChoice === 'join' && (
-                  <div className="space-y-3 mt-3 p-3 bg-slate-800/50 rounded-lg">
+                  <div className="space-y-3 mt-3 p-3 bg-slate-300/50 rounded-lg">
                     <Input
                       label="Organization UID"
                       placeholder="ORG-XXXXXX"
                       {...register('joinUid')}
                     />
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-800">
                       Ask your organization admin for this UID.
                     </p>
                   </div>
@@ -307,14 +305,12 @@ export const LoginPage: React.FC = () => {
           </div>
         </Card>
 
-        {/* Demo Credentials */}
         {!isSignup && (
-          <div className="mt-4 p-3 bg-slate-800/50 rounded-lg text-center text-xs text-slate-500">
+          <div className="mt-4 p-3 bg-slate-300 rounded-lg text-center text-md text-slate-800">
             <p><strong>Demo:</strong> demo@example.com / demo1234</p>
           </div>
         )}
 
-        {/* Role Info */}
         {isSignup && (
           <div className="mt-6 text-center text-xs text-slate-500">
             <p>Roles: <strong>Owner</strong> (full control) • <strong>Admin</strong> (manage) • <strong>Member</strong> (work) • <strong>Viewer</strong> (read-only)</p>

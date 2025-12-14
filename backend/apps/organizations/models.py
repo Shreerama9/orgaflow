@@ -22,4 +22,16 @@ class OrganizationMember(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.MEMBER)
-    
+
+
+class Webhook(models.Model):
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='webhooks')
+    url = models.URLField(max_length=500)
+    secret = models.CharField(max_length=255)
+    events = models.JSONField(default=list)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Webhook for {self.organization.name} - {self.url}"

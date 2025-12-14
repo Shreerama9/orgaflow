@@ -1,4 +1,6 @@
-
+/**
+ * Barrel exports for components.
+ */
 
 export * from './ui';
 export { TaskBoard } from './TaskBoard';

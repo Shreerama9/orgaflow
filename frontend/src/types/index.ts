@@ -4,7 +4,7 @@ export interface User {
   email: string;
   fullName: string;
   avatarUrl?: string;
-  createdAt: string;
+  dateJoined: string;
 }
 
 // Organization types

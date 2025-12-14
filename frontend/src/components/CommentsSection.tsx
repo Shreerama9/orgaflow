@@ -14,7 +14,7 @@ interface CommentsSectionProps {
 export const CommentsSection: React.FC<CommentsSectionProps> = ({ taskId }) => {
   const { data, loading, refetch } = useQuery(GET_TASK_COMMENTS, {
     variables: { taskId },
-    fetchPolicy: 'network-only', // Ensure fresh comments
+    fetchPolicy: 'network-only',
   });
 
   const [createComment, { loading: creating }] = useMutation(CREATE_TASK_COMMENT, {
@@ -74,7 +74,9 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({ taskId }) => {
         )}
       </div>
 
-      {/* Add Comment Form */}
+      
+
+      
       <form onSubmit={handleSubmit(onSubmit)} className="relative">
         <Textarea
           placeholder="Write a comment..."

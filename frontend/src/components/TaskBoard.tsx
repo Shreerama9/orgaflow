@@ -1,3 +1,8 @@
+/**
+ * Drag-and-Drop Task Board Component using DnD Kit.
+ * Allows reordering tasks between status columns.
+ */
+
 import React from 'react';
 import {
   DndContext,

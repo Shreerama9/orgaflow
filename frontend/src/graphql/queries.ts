@@ -12,7 +12,7 @@ export const USER_FRAGMENT = gql`
     email
     fullName
     avatarUrl
-    createdAt
+    dateJoined
   }
 `;
 

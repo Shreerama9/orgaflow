@@ -1,3 +1,8 @@
+/**
+ * Layout - Wrapper component that includes Navbar and main content area.
+ * Used for authenticated pages.
+ */
+
 import React from 'react';
 import { Navbar } from './Navbar';
 

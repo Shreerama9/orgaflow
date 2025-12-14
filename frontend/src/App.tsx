@@ -74,7 +74,9 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-// Main App Component
+
+
+
 const App: React.FC = () => {
   return (
     <ApolloProvider client={apolloClient}>

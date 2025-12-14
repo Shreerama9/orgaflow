@@ -1,7 +1,3 @@
-/**
- * Frontend component tests using Vitest and React Testing Library.
- */
-
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Button, Card, Badge, Input, LoadingSpinner, EmptyState } from '../components/ui';

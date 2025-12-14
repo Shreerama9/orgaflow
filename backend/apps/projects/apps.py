@@ -1,6 +1,11 @@
+"""Apps configuration for projects app."""
 from django.apps import AppConfig
 
 
 class ProjectsConfig(AppConfig):
-      name = 'apps.projects'
-      label = 'projects'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.projects'
+
+    def ready(self):
+        import apps.projects.signals
+    verbose_name = 'Projects'
