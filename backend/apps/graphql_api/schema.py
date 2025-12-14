@@ -27,7 +27,7 @@ class ProjectType(DjangoObjectType):
 class TaskType(DjangoObjectType):
     class Meta:
         model = Task
-        field = ('id','title','status', 'priority', 'assignee')
+        fields = ('id','title','status', 'priority', 'assignee')
 
 
 
@@ -42,7 +42,7 @@ class Query(graphene.ObjectType):
         return info.context.user
     
     @login_required
-    def resolve_my_organization(self, info):
+    def resolve_my_organizations(self, info):
         return Organization.objects.filter(members__user=info.context.user)
     
 

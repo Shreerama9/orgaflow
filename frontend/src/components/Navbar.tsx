@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, LogOut, Menu, X } from 'lucide-react';
@@ -75,7 +74,7 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Desktop */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
@@ -93,7 +92,7 @@ export const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Menu */}
+          {/* User Menu */}
           <div className="hidden md:flex items-center gap-4">
             <div className="text-right">
               <p className="text-sm font-medium text-slate-700">{user?.fullName || user?.email}</p>

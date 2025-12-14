@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class GraphqlApiConfig(AppConfig):
-    name = 'graphql_api'
+      name = 'apps.graphql_api'
+      label = 'graphql_api'

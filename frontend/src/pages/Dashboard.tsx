@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +12,7 @@ import { Button, Card, Input, Textarea, Modal, Badge, EmptyState, LoadingPage, L
 import { WebhookModal } from '../components/WebhookModal';
 import type { Project, ProjectStatus } from '../types';
 
+// Status config for display
 const statusConfig: Record<ProjectStatus, { label: string; icon: React.ReactNode; variant: 'success' | 'warning' | 'info' | 'default' }> = {
   ACTIVE: { label: 'Active', icon: <Clock className="w-3 h-3" />, variant: 'success' },
   ON_HOLD: { label: 'On Hold', icon: <Pause className="w-3 h-3" />, variant: 'warning' },
@@ -25,8 +27,10 @@ export const DashboardPage: React.FC = () => {
   const [showNewOrg, setShowNewOrg] = useState(false);
   const [showWebhooks, setShowWebhooks] = useState(false);
 
+  // Fetch organizations
   const { data: orgsData, loading: orgsLoading } = useQuery(GET_MY_ORGANIZATIONS);
 
+  // Fetch projects for current org
   const { data: projectsData, loading: projectsLoading, refetch: refetchProjects } = useQuery(GET_PROJECTS, {
     variables: { organizationId: currentOrg?.id },
     skip: !currentOrg?.id,
@@ -34,6 +38,7 @@ export const DashboardPage: React.FC = () => {
 
 
 
+  // Create project mutation
   const [createProject, { loading: creatingProject }] = useMutation(CREATE_PROJECT, {
     onCompleted: () => {
       setShowNewProject(false);
@@ -41,6 +46,7 @@ export const DashboardPage: React.FC = () => {
     },
   });
 
+  // Create organization mutation
   const [createOrg, { loading: creatingOrg }] = useMutation(CREATE_ORGANIZATION, {
     refetchQueries: [{ query: GET_MY_ORGANIZATIONS }],
     onCompleted: (data) => {
@@ -51,6 +57,7 @@ export const DashboardPage: React.FC = () => {
     },
   });
 
+  // Forms
   const projectForm = useForm<{ name: string; description: string }>();
   const orgForm = useForm<{ name: string; contactEmail: string }>();
 
@@ -83,6 +90,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-surface-50">
+      {/* Header */}
 
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -199,8 +207,7 @@ export const DashboardPage: React.FC = () => {
         )}
       </main>
 
-
-
+      {/* New Project Modal */}
       <Modal isOpen={showNewProject} onClose={() => setShowNewProject(false)} title="Create Project">
         <form onSubmit={projectForm.handleSubmit(handleCreateProject)} className="space-y-4">
           <Input
@@ -224,8 +231,7 @@ export const DashboardPage: React.FC = () => {
         </form>
       </Modal>
 
-
-
+      {/* New Organization Modal */}
       <Modal isOpen={showNewOrg} onClose={() => setShowNewOrg(false)} title="Create Organization">
         <form onSubmit={orgForm.handleSubmit(handleCreateOrg)} className="space-y-4">
           <Input

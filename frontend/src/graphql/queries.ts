@@ -1,3 +1,8 @@
+/**
+ * GraphQL queries for fetching data.
+ * All queries enforce organization-based access control.
+ */
+
 import { gql } from '@apollo/client';
 
 // User fragments

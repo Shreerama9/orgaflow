@@ -1,55 +1,56 @@
-import React, { ReactNode, forwardRef} from "react";
-import {Loader2, X } from 'lucide-react'
 
 
+import React, { ReactNode, forwardRef } from 'react';
+import { Loader2, X } from 'lucide-react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
-    variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
-    size?: 'sm' | 'md' | 'lg'
-    isLoading? : boolean;
-    children: ReactNode;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  isLoading?: boolean;
+  children: ReactNode;
 }
 
-export const Button= forwardRef<HTMLButtonElement, ButtonProps>{
-    ({variant = 'primary', size = 'md', isLoading, children, className = '',disabled, ...props}, ref)=>{
-        const baseStyles = 'inline-flex items-center font-medium rounded-lg transition-all dduration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', size = 'md', isLoading, children, className = '', disabled, ...props }, ref) => {
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    
+    const variants = {
+      primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
+      secondary: 'bg-surface-100 text-surface-900 border border-surface-200 hover:bg-surface-200 focus:ring-surface-400',
+      danger: 'bg-danger text-white hover:bg-red-600 focus:ring-red-400',
+      ghost: 'text-surface-600 hover:text-surface-900 hover:bg-surface-100 focus:ring-surface-400',
+    };
+    
+    const sizes = {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-sm',
+      lg: 'px-6 py-3 text-base',
+    };
 
-        const variants = {
-            primary: 'bg-primary-600 text-white hoverL:bg-primary-700 focus:ring-primary-500',
-            secondary : 'bg-surface-100 text-surface-900 border border-surface-200 hover:bg-surface focus:ring-surface-400',
-            danger : 'bg-danger text-white hover:bg-red-600 focus:ring-red-400 ',
-            ghost : 'text-surface-600 hover:text-surface-900 hover:bg-surface-100 focus:ring-surface-400'
-        };
-
-        const sizes = {
-            sm: 'px-3 py-1.5 text-sm',
-            md: 'px-4 py-2 text-sm',
-            lg: 'px-6 py-3 text-base',
-        };
-
-
-        return(
-            <button
-                className={`${baseStyles} ${variants{variant}} ${sizes{size}} ${className} `}
-                ref = {ref}
-                disabled = {disabled || isLoading}
-                {...props}
-            >
-                {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin"/>}
-                {children}
-            </button>
-        )
-    }
-}
-
+    return (
+      <button
+        ref={ref}
+        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+        disabled={disabled || isLoading}
+        {...props}
+      >
+        {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        {children}
+      </button>
+    );
+  }
+);
 
 Button.displayName = 'Button';
 
 
-//Input Comp
-interface InputProps extends React.InputHTMLAttribute<HTMLInputElement>{
-    label?: string;
-    error?: string;
+
+
+// Input Component
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -109,10 +110,6 @@ Textarea.displayName = 'Textarea';
 
 
 
-
-
-// Card Component
-
 interface CardProps {
   children: ReactNode;
   className?: string;
@@ -132,9 +129,6 @@ export const Card: React.FC<CardProps> = ({ children, className = '', hover = fa
 };
 
 
-
-
-// Modal Component
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -170,7 +164,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
   );
 };
 
-// Loading Components
+
 export const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
   const sizes = { sm: 'w-4 h-4', md: 'w-8 h-8', lg: 'w-12 h-12' };
   return <Loader2 className={`${sizes[size]} animate-spin text-primary-600`} />;
@@ -185,8 +179,6 @@ export const LoadingPage: React.FC = () => (
 export const LoadingSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
   <div className={`animate-pulse bg-surface-200 rounded ${className}`} />
 );
-
-// Badge Component
 
 interface BadgeProps {
   children: ReactNode;
@@ -209,7 +201,10 @@ export const Badge: React.FC<BadgeProps> = ({ children, variant = 'default' }) =
   );
 };
 
+// =============================================================================
 // Empty State Component
+// =============================================================================
+
 interface EmptyStateProps {
   icon?: ReactNode;
   title: string;

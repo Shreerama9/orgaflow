@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { GET_ME } from '../graphql/queries';

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
@@ -13,6 +12,7 @@ import { Layout } from './components/Layout';
 import { LoadingPage } from './components/ui';
 import './index.css';
 
+// Protected route wrapper with Layout
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
@@ -22,6 +22,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <Layout>{children}</Layout>;
 };
 
+// Public route (redirect if authenticated)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
@@ -73,6 +74,7 @@ const AppRoutes: React.FC = () => {
   );
 };
 
+// Main App Component
 const App: React.FC = () => {
   return (
     <ApolloProvider client={apolloClient}>

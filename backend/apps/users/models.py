@@ -6,7 +6,7 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('Email is required')
         email =self.normalize_email(email)
-        user = self.normalize_email(email=email, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
         return user
@@ -19,7 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD=email
+    USERNAME_FIELD='email'
     objects= UserManager()
     
 

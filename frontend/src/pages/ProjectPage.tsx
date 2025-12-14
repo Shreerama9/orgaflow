@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
@@ -30,14 +31,13 @@ export const ProjectPage: React.FC = () => {
 
 
 
-
+  // Fetch organization members for assignee dropdown
   const { data: membersData } = useQuery(GET_ORGANIZATION_MEMBERS, {
     variables: { organizationId: projectData?.project?.organization?.id },
     skip: !projectData?.project?.organization?.id,
   });
 
-
-
+  // Mutations
   const [createTask, { loading: creatingTask }] = useMutation(CREATE_TASK, {
     onCompleted: () => {
       setShowNewTask(false);
@@ -71,6 +71,7 @@ export const ProjectPage: React.FC = () => {
 
 
 
+  // Forms
   const taskForm = useForm<{ title: string; description: string; priority: TaskPriority }>();
 
   const handleCreateTask = async (data: { title: string; description: string; priority: TaskPriority }) => {
@@ -181,6 +182,7 @@ export const ProjectPage: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Drag-and-Drop Task Board */}
         <TaskBoard
           tasks={tasks}
           onTaskClick={handleTaskClick}
@@ -188,7 +190,7 @@ export const ProjectPage: React.FC = () => {
         />
       </main>
 
-
+      {/* New Task Modal */}
       <Modal isOpen={showNewTask} onClose={() => setShowNewTask(false)} title="Create Task">
         <form onSubmit={taskForm.handleSubmit(handleCreateTask)} className="space-y-4">
           <Input
@@ -224,7 +226,7 @@ export const ProjectPage: React.FC = () => {
         </form>
       </Modal>
 
-      
+      {/* Edit Task Modal */}
       <EditTaskModal
         isOpen={showEditModal}
         onClose={() => {
@@ -238,6 +240,8 @@ export const ProjectPage: React.FC = () => {
         isSaving={updatingTask}
         isDeleting={deletingTask}
       />
+
+      {/* Comments Section in Edit Modal - Optional Enhancement */}
 
     </div>
   );
