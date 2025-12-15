@@ -1,7 +1,3 @@
-/**
- * GraphQL mutations for member management.
- */
-
 import { gql } from '@apollo/client';
 
 // Existing exports

@@ -1,8 +1,3 @@
-/**
- * GraphQL mutations for creating and updating data.
- * Includes auth, organization, project, task, and comment mutations.
- */
-
 import { gql } from '@apollo/client';
 import { USER_FRAGMENT } from './queries';
 

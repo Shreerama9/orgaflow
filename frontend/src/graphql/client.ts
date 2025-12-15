@@ -1,8 +1,3 @@
-/**
- * Apollo Client configuration with JWT authentication.
- * Provides GraphQL client for queries, mutations, and subscriptions.
- */
-
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
