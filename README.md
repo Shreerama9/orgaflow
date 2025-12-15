@@ -25,7 +25,7 @@ A project management tool built with Django (GraphQL) and React. It handles mult
     ```
 4.  Start the server:
     ```bash
-    python manage.py runserver 0.0.0.0:8000
+    python manage.py runserver 0.0.0.0:4320
     ```
 
 ### Frontend
@@ -40,7 +40,7 @@ A project management tool built with Django (GraphQL) and React. It handles mult
     ```
 3.  Start the development server:
     ```bash
-    npm run dev
+    npm run dev 
     ```
 
 ## Demo Credentials
