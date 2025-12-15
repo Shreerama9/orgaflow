@@ -1,22 +1,49 @@
-# OrgaFlow (Backend API)
+# OrgaFlow
 
-Welcome to **OrgaFlow**, a robust Project Management System backend built with Django and GraphQL. This API provides the foundation for a multi-tenant application where users can manage organizations, projects, and tasks.
+A project management tool built with Django (GraphQL) and React. It handles multi-tenancy, so you can manage multiple organizations, projects, and tasks in one place.
 
+## Tech Stack
 
-## 🚀 Features
+*   **Backend**: Django, Graphene (GraphQL), SQLite
+*   **Frontend**: React, Apollo Client, Tailwind CSS
 
-- **Multi-Tenancy**: Data is isolated by Organization. Users can belong to multiple organizations.
-- **Role-Based Access Control (RBAC)**: Granular permissions for Owners, Admins, Members, and Viewers.
-- **GraphQL API**: Flexible and efficient data fetching using Graphene-Django.
-- **Authentication**: Secure JWT (JSON Web Token) authentication.
-- **Custom User Model**: Email-based login (no usernames required).
+## Getting Started
 
-## 🛠 Tech Stack
+### Backend
 
-- **Language**: Python 3.10+
-- **Framework**: Django 4.x
-- **API**: Graphene-Django (GraphQL)
-- **Database**: SQLite (Development), PostgreSQL (Production ready)
-- **Auth**: django-graphql-jwt
+1.  Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Run migrations:
+    ```bash
+    python manage.py migrate
+    ```
+4.  Start the server:
+    ```bash
+    python manage.py runserver 0.0.0.0:8000
+    ```
 
+### Frontend
 
+1.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+## Demo Credentials
+
+*   **Owner**: `owner@example.com` / `password123`
+*   **Member**: `member@example.com` / `password123`
