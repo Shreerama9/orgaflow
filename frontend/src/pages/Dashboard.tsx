@@ -2,22 +2,13 @@ import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Plus, FolderKanban, Calendar, CheckCircle2, Clock, Pause, Building } from 'lucide-react';
+import { Plus, FolderKanban, Calendar, Building } from 'lucide-react';
 import { GET_MY_ORGANIZATIONS, GET_PROJECTS } from '../graphql/queries';
 import { CREATE_PROJECT, CREATE_ORGANIZATION } from '../graphql/mutations';
 import { useOrg } from '../context/OrgContext';
-import { Button, Card, Input, Textarea, Modal, Badge, EmptyState, LoadingPage, LoadingSkeleton } from '../components/ui';
+import { Button, Card, Input, Textarea, Modal, EmptyState, LoadingPage, LoadingSkeleton } from '../components/ui';
 import { WebhookModal } from '../components/WebhookModal';
-import type { Project, ProjectStatus } from '../types';
-
-
-
-const statusConfig: Record<ProjectStatus, { label: string; icon: React.ReactNode; variant: 'success' | 'warning' | 'info' | 'default' }> = {
-  ACTIVE: { label: 'Active', icon: <Clock className="w-3 h-3" />, variant: 'success' },
-  ON_HOLD: { label: 'On Hold', icon: <Pause className="w-3 h-3" />, variant: 'warning' },
-  COMPLETED: { label: 'Completed', icon: <CheckCircle2 className="w-3 h-3" />, variant: 'info' },
-  ARCHIVED: { label: 'Archived', icon: null, variant: 'default' },
-};
+import type { Project } from '../types';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();

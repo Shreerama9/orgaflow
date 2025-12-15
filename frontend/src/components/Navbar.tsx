@@ -6,7 +6,6 @@ import { useOrg } from '../context/OrgContext';
 import { useQuery } from '@apollo/client';
 import { GET_MY_ORGANIZATIONS } from '../graphql/queries';
 import { Button } from './ui';
-import type { Organization } from '../types';
 
 interface NavItem {
   name: string;

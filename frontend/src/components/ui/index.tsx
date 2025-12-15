@@ -15,7 +15,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
       secondary: 'bg-surface-100 text-surface-900 border border-surface-200 hover:bg-surface-200 focus:ring-surface-400',
-      danger: 'bg-danger text-white hover:bg-red-600 focus:ring-red-400',
+      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-400',
       ghost: 'text-surface-600 hover:text-surface-900 hover:bg-surface-100 focus:ring-surface-400',
     };
     
@@ -186,7 +186,7 @@ interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({ children, variant = 'default' }) => {
   const variants = {
     default: 'bg-surface-100 text-surface-600',
-    success: 'bg-green-50 text-green-600',
+    success: 'bg-green-50 text-green-400',
     warning: 'bg-amber-50 text-amber-600',
     danger: 'bg-red-50 text-red-600',
     info: 'bg-blue-50 text-blue-600',
