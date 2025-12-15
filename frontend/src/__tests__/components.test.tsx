@@ -28,7 +28,8 @@ describe('UI Components', () => {
 
     it('applies hover class when hover prop is true', () => {
       render(<Card hover>Hoverable</Card>);
-      expect(screen.getByText('Hoverable').parentElement).toHaveClass('cursor-pointer');
+      const card = screen.getByText('Hoverable').closest('div');
+      expect(card).toHaveClass('cursor-pointer');
     });
   });
 
