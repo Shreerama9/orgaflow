@@ -101,10 +101,10 @@ class ProjectModelTest(TestCase):
         Task.objects.create(project=project, title='Task 4', status=Task.Status.DONE)
         
         stats = project.get_task_stats()
-        self.assertEqual(stats['total'], 4)
-        self.assertEqual(stats['completed'], 2)
-        self.assertEqual(stats['in_progress'], 1)
-        self.assertEqual(stats['todo'], 1)
+        self.assertEqual(stats['total_tasks'], 4)
+        self.assertEqual(stats['completed_tasks'], 2)
+        self.assertEqual(stats['in_progress_tasks'], 1)
+        self.assertEqual(stats['todo_tasks'], 1)
         self.assertEqual(stats['completion_rate'], 50.0)
 
 
