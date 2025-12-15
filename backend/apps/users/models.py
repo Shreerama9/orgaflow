@@ -1,8 +1,3 @@
-"""
-Custom User model with email as the primary identifier.
-Extends Django's AbstractUser for built-in password hashing and session management.
-"""
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 

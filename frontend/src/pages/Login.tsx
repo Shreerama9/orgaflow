@@ -307,7 +307,10 @@ export const LoginPage: React.FC = () => {
 
         {!isSignup && (
           <div className="mt-4 p-3 bg-slate-300 rounded-lg text-center text-md text-slate-800">
-            <p><strong>Demo:</strong> demo@example.com / demo1234</p>
+            <div className="space-y-1">
+              <p><strong>Owner:</strong> owner@example.com / password123</p>
+              <p><strong>Member:</strong> member@example.com / password123</p>
+            </div>
           </div>
         )}
 

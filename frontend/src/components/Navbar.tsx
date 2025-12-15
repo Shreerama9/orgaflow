@@ -51,23 +51,10 @@ export const Navbar: React.FC = () => {
               <img src="../../assets/logo_orgaflow.png" alt="OrgaFlow" className="h-20" />
             </Link>
             
-            {/* Org Selector */}
-            {organizations.length > 0 && (
-              <div className="hidden md:block">
-                <select
-                  value={currentOrg?.id || ''}
-                  onChange={(e) => {
-                    const org = organizations.find((o: Organization) => o.id === e.target.value);
-                    setCurrentOrg(org || null);
-                  }}
-                  className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer hover:bg-slate-100 transition-colors"
-                >
-                  {organizations.map((org: Organization) => (
-                    <option key={org.id} value={org.id}>
-                      {org.name}
-                    </option>
-                  ))}
-                </select>
+            {/* Org Name Display */}
+            {currentOrg && (
+              <div className="hidden md:block px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-700">
+                {currentOrg.name}
               </div>
             )}
           </div>

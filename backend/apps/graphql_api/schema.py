@@ -7,6 +7,7 @@ from django.db.models import Q, Count, Case, When, IntegerField
 from apps.users.models import User
 from apps.organizations.models import Organization, OrganizationMember, Webhook
 from apps.projects.models import Project, Task, TaskComment
+from apps.graphql_api.decorators import organization_member_required
 
 # --- Types ---
 
@@ -18,10 +19,11 @@ class UserType(DjangoObjectType):
 class OrganizationType(DjangoObjectType):
     member_count = graphene.Int()
     project_count = graphene.Int()
+    viewer_role = graphene.String()
 
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'slug', 'uid', 'contact_email', 'created_at')
+        fields = ('id', 'name', 'slug', 'uid', 'contact_email', 'description', 'created_at')
 
     def resolve_member_count(self, info):
         return self.organizationmember_set.count()
@@ -29,10 +31,20 @@ class OrganizationType(DjangoObjectType):
     def resolve_project_count(self, info):
         return self.projects.count()
 
+    def resolve_viewer_role(self, info):
+        user = info.context.user
+        if user.is_anonymous:
+            return None
+        try:
+            member = OrganizationMember.objects.get(user=user, organization=self)
+            return member.role
+        except OrganizationMember.DoesNotExist:
+            return None
+
 class OrganizationMemberType(DjangoObjectType):
     class Meta:
         model = OrganizationMember
-        fields = ('id', 'user', 'organization', 'role')
+        fields = ('id', 'user', 'organization', 'role', 'joined_at')
 
 class ProjectStatsType(graphene.ObjectType):
     total_tasks = graphene.Int()
@@ -111,6 +123,10 @@ class CreateOrganization(graphene.Mutation):
         if Organization.objects.filter(slug=slug).exists():
             slug = f"{slug}-{uuid.uuid4().hex[:6]}"
 
+        # Enforce Multi-tenancy: User cannot create new org if they already belong to one
+        if OrganizationMember.objects.filter(user=user).exists():
+             return CreateOrganization(success=False, message="You already belong to an organization. Cannot create a new one.")
+
         org = Organization.objects.create(
             name=name,
             contact_email=contact_email,
@@ -169,6 +185,98 @@ class DeleteOrganization(graphene.Mutation):
         except Exception as e:
             return DeleteOrganization(success=False, message=str(e))
 
+
+class InviteMember(graphene.Mutation):
+    success = graphene.Boolean()
+    message = graphene.String()
+    member = graphene.Field(OrganizationMemberType)
+
+    class Arguments:
+        organization_id = graphene.ID(required=True)
+        email = graphene.String(required=True)
+        role = graphene.String()
+
+    @login_required
+    @organization_member_required(min_role='ADMIN')
+    def mutate(self, info, organization_id, email, member, role=OrganizationMember.Role.MEMBER):
+        if role not in OrganizationMember.Role.values:
+            return InviteMember(success=False, message="Invalid role")
+
+        try:
+            invited_user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return InviteMember(success=False, message="User not found with this email")
+
+        if OrganizationMember.objects.filter(user=invited_user, organization_id=organization_id).exists():
+            return InviteMember(success=False, message="User is already a member")
+
+        new_member = OrganizationMember.objects.create(
+            user=invited_user,
+            organization_id=organization_id,
+            role=role
+        )
+        return InviteMember(success=True, member=new_member, message="Member added successfully")
+
+class ChangeMemberRole(graphene.Mutation):
+    success = graphene.Boolean()
+    message = graphene.String()
+    member = graphene.Field(OrganizationMemberType)
+
+    class Arguments:
+        organization_id = graphene.ID(required=True)
+        user_id = graphene.ID(required=True)
+        new_role = graphene.String(required=True)
+
+    @login_required
+    @organization_member_required(min_role='OWNER')
+    def mutate(self, info, organization_id, user_id, new_role, member):
+        if new_role not in OrganizationMember.Role.values:
+            return ChangeMemberRole(success=False, message="Invalid role")
+
+        try:
+            member_to_change = OrganizationMember.objects.get(user_id=user_id, organization_id=organization_id)
+        except OrganizationMember.DoesNotExist:
+            return ChangeMemberRole(success=False, message="Member not found")
+
+        if member_to_change.role == OrganizationMember.Role.OWNER:
+            return ChangeMemberRole(success=False, message="Cannot change owner role")
+
+        member_to_change.role = new_role
+        member_to_change.save()
+        return ChangeMemberRole(success=True, member=member_to_change, message="Role changed successfully")
+
+class RemoveMember(graphene.Mutation):
+    success = graphene.Boolean()
+    message = graphene.String()
+
+    class Arguments:
+        organization_id = graphene.ID(required=True)
+        user_id = graphene.ID(required=True)
+
+    @login_required
+    @organization_member_required(min_role='ADMIN')
+    def mutate(self, info, organization_id, user_id, member):
+        try:
+            member_to_remove = OrganizationMember.objects.get(user_id=user_id, organization_id=organization_id)
+        except OrganizationMember.DoesNotExist:
+            return RemoveMember(success=False, message="Member not found")
+
+        # Prevent removing self (leave org instead) or owner
+        if member_to_remove.user == info.context.user:
+             return RemoveMember(success=False, message="Cannot remove yourself")
+
+        if member_to_remove.role == OrganizationMember.Role.OWNER:
+            return RemoveMember(success=False, message="Cannot remove owner")
+            
+        # Admins cannot remove other Admins or Owners
+        if member.role == OrganizationMember.Role.ADMIN and member_to_remove.role in [OrganizationMember.Role.ADMIN, OrganizationMember.Role.OWNER]:
+             return RemoveMember(success=False, message="Permission denied")
+
+        member_to_remove.delete()
+        return RemoveMember(success=True, message="Member removed successfully")
+
+
+
 class CreateProject(graphene.Mutation):
     project = graphene.Field(ProjectType)
     success = graphene.Boolean()
@@ -180,19 +288,17 @@ class CreateProject(graphene.Mutation):
         due_date = graphene.Date()
 
     @login_required
-    def mutate(self, info, organization_id, name, description=None, due_date=None):
-        user = info.context.user
-        # Verify membership
-        if not OrganizationMember.objects.filter(user=user, organization_id=organization_id).exists():
-            raise Exception("Permission denied")
-        
+    @organization_member_required(min_role='ADMIN')
+    def mutate(self, info, organization_id, name, member, description=None, due_date=None):
         project = Project.objects.create(
             organization_id=organization_id,
             name=name,
             description=description or "",
-            due_date=due_date
+            due_date=due_date,
+            created_by=info.context.user
         )
         return CreateProject(project=project, success=True)
+
 
 class UpdateProject(graphene.Mutation):
     project = graphene.Field(ProjectType)
@@ -348,6 +454,51 @@ class CreateTaskComment(graphene.Mutation):
         except Task.DoesNotExist:
             return CreateTaskComment(success=False)
 
+class UpdateTaskComment(graphene.Mutation):
+    comment = graphene.Field(TaskCommentType)
+    success = graphene.Boolean()
+
+    class Arguments:
+        id = graphene.ID(required=True)
+        content = graphene.String(required=True)
+
+    @login_required
+    def mutate(self, info, id, content):
+        user = info.context.user
+        try:
+            comment = TaskComment.objects.get(pk=id)
+            if comment.author != user:
+                raise Exception("Permission denied: You can only edit your own comments")
+            
+            comment.content = content
+            comment.save()
+            return UpdateTaskComment(comment=comment, success=True)
+        except TaskComment.DoesNotExist:
+            return UpdateTaskComment(success=False)
+
+class DeleteTaskComment(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    @login_required
+    def mutate(self, info, id):
+        user = info.context.user
+        try:
+            comment = TaskComment.objects.get(pk=id)
+            # Allow author or admins/owners to delete
+            if comment.author != user:
+                # Check if admin/owner of org
+                member = OrganizationMember.objects.get(user=user, organization=comment.task.project.organization)
+                if member.role not in [OrganizationMember.Role.OWNER, OrganizationMember.Role.ADMIN]:
+                     raise Exception("Permission denied")
+
+            comment.delete()
+            return DeleteTaskComment(success=True)
+        except (TaskComment.DoesNotExist, OrganizationMember.DoesNotExist):
+            return DeleteTaskComment(success=False)
+
 class CreateWebhook(graphene.Mutation):
     webhook = graphene.Field(WebhookType)
     success = graphene.Boolean()
@@ -407,6 +558,9 @@ class Mutation(graphene.ObjectType):
     create_organization = CreateOrganization.Field()
     join_organization = JoinOrganization.Field()
     delete_organization = DeleteOrganization.Field()
+    invite_member = InviteMember.Field()
+    change_member_role = ChangeMemberRole.Field()
+    remove_member = RemoveMember.Field()
     
     create_project = CreateProject.Field()
     update_project = UpdateProject.Field()
@@ -417,6 +571,8 @@ class Mutation(graphene.ObjectType):
     delete_task = DeleteTask.Field()
     
     create_task_comment = CreateTaskComment.Field()
+    update_task_comment = UpdateTaskComment.Field()
+    delete_task_comment = DeleteTaskComment.Field()
 
     create_webhook = CreateWebhook.Field()
     delete_webhook = DeleteWebhook.Field()
@@ -454,11 +610,11 @@ class Query(graphene.ObjectType):
 
     @login_required
     def resolve_my_organizations(self, info):
-        return Organization.objects.filter(members__user=info.context.user)
+        return Organization.objects.filter(organizationmember__user=info.context.user)
 
     @login_required
     def resolve_organization(self, info, slug):
-        return Organization.objects.get(slug=slug, members__user=info.context.user)
+        return Organization.objects.get(slug=slug, organizationmember__user=info.context.user)
 
     @login_required
     def resolve_organization_members(self, info, organization_id):

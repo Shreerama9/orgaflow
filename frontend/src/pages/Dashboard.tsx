@@ -113,12 +113,15 @@ export const DashboardPage: React.FC = () => {
                 <p className="text-surface-500 mt-1">
                   {projects.length} project{projects.length !== 1 ? 's' : ''} in {currentOrg?.name}
                 </p>
+                {/* Show UID for Owners/Admins */}
+                {currentOrg?.viewerRole && ['OWNER', 'ADMIN'].includes(currentOrg.viewerRole) && (
+                  <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-surface-100 rounded-md border border-surface-200">
+                    <span className="text-xs font-medium text-surface-500 uppercase">Org UID:</span>
+                    <code className="text-sm font-mono text-primary-600 select-all">{currentOrg.uid}</code>
+                  </div>
+                )}
               </div>
               <div className="flex gap-3">
-                <Button variant="secondary" onClick={() => setShowNewOrg(true)}>
-                  <Building className="w-4 h-4 mr-2" />
-                  New Org
-                </Button>
                 <Button variant="secondary" onClick={() => setShowWebhooks(true)}>
                   <FolderKanban className="w-4 h-4 mr-2" />
                   Webhooks
@@ -166,10 +169,6 @@ export const DashboardPage: React.FC = () => {
                       <h3 className="font-semibold text-surface-900 group-hover:text-primary-600 transition-colors">
                         {project.name}
                       </h3>
-                      <Badge variant={statusConfig[project.status].variant}>
-                        {statusConfig[project.status].icon}
-                        <span className="ml-1">{statusConfig[project.status].label}</span>
-                      </Badge>
                     </div>
                     
                     {project.description && (

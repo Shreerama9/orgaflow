@@ -121,11 +121,13 @@ export const TeamManagement: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-900">Team Management</h1>
           <p className="text-slate-500">Manage members of {currentOrg.name}</p>
         </div>
-        <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-          <p className="text-xs text-slate-400 uppercase font-bold mb-1">Organization UID</p>
-          <code className="text-lg font-mono text-primary-600">{currentOrg.uid}</code>
-          <p className="text-xs text-slate-400 mt-1">Share this UID to invite members</p>
-        </div>
+        {canManage && (
+          <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+            <p className="text-xs text-slate-400 uppercase font-bold mb-1">Organization UID</p>
+            <code className="text-lg font-mono text-primary-600">{currentOrg.uid}</code>
+            <p className="text-xs text-slate-400 mt-1">Share this UID to invite members</p>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-4">
@@ -185,7 +187,7 @@ export const TeamManagement: React.FC = () => {
           <EmptyState
             icon={<Users className="w-12 h-12 text-slate-400" />}
             title="No team members"
-            description="Invite people to join your organization using the UID above."
+            description={canManage ? "Invite people to join your organization using the UID above." : "No other team members yet."}
           />
         )}
       </div>

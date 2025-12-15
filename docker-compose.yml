@@ -52,7 +52,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     ports:
-      - "4321:5173"
+      - "4321:4321"
     environment:
       - VITE_API_URL=http://localhost:4320/graphql/
     depends_on:

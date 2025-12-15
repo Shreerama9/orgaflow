@@ -7,12 +7,13 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Settings } from 'lucide-react';
 import { GET_PROJECT, GET_TASKS, GET_ORGANIZATION_MEMBERS } from '../graphql/queries';
-import { CREATE_TASK, UPDATE_TASK, DELETE_TASK } from '../graphql/mutations';
-import { Button, Input, Textarea, Modal, LoadingPage, Card } from '../components/ui';
-import { TaskBoard } from '../components/TaskBoard';
+import { EditProjectModal } from '../components/EditProjectModal';
 import { EditTaskModal } from '../components/EditTaskModal';
+import { TaskBoard } from '../components/TaskBoard';
+import { Button, Modal, Input, Textarea, Card, LoadingPage } from '../components/ui';
+import { UPDATE_PROJECT, DELETE_PROJECT, CREATE_TASK, UPDATE_TASK, DELETE_TASK } from '../graphql/mutations';
 import type { Task, TaskStatus, TaskPriority, User } from '../types';
 
 export const ProjectPage: React.FC = () => {
@@ -21,9 +22,10 @@ export const ProjectPage: React.FC = () => {
   const [showNewTask, setShowNewTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showProjectSettings, setShowProjectSettings] = useState(false);
 
   // Fetch project
-  const { data: projectData, loading: projectLoading } = useQuery(GET_PROJECT, {
+  const { data: projectData, loading: projectLoading, refetch: refetchProject } = useQuery(GET_PROJECT, {
     variables: { id },
   });
 
@@ -31,8 +33,6 @@ export const ProjectPage: React.FC = () => {
   const { data: tasksData, refetch: refetchTasks } = useQuery(GET_TASKS, {
     variables: { projectId: id },
   });
-
-
 
   // Fetch organization members for assignee dropdown
   const { data: membersData } = useQuery(GET_ORGANIZATION_MEMBERS, {
@@ -72,7 +72,24 @@ export const ProjectPage: React.FC = () => {
     },
   });
 
+  const [updateProject, { loading: updatingProject }] = useMutation(UPDATE_PROJECT, {
+    onCompleted: () => {
+      refetchProject();
+      setShowProjectSettings(false);
+    },
+    onError: (error) => {
+      alert(`Failed to update project: ${error.message}`);
+    },
+  });
 
+  const [deleteProject, { loading: deletingProject }] = useMutation(DELETE_PROJECT, {
+    onCompleted: () => {
+      navigate('/dashboard');
+    },
+    onError: (error) => {
+      alert(`Failed to delete project: ${error.message}`);
+    },
+  });
 
   // Forms
   const taskForm = useForm<{ title: string; description: string; priority: TaskPriority }>();
@@ -141,7 +158,18 @@ export const ProjectPage: React.FC = () => {
     await deleteTask({ variables: { id: taskId } });
   };
 
+  const handleSaveProject = async (projectId: string, data: any) => {
+    await updateProject({
+      variables: {
+        id: projectId,
+        ...data,
+      },
+    });
+  };
 
+  const handleDeleteProject = async (projectId: string) => {
+    await deleteProject({ variables: { id: projectId } });
+  };
 
   if (projectLoading) return <LoadingPage />;
 
@@ -172,7 +200,16 @@ export const ProjectPage: React.FC = () => {
                 Back
               </Button>
               <div>
-                <h1 className="text-xl font-bold text-surface-900">{project.name}</h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-bold text-surface-900">{project.name}</h1>
+                  <button 
+                    onClick={() => setShowProjectSettings(true)}
+                    className="text-surface-400 hover:text-primary-600 transition-colors"
+                    title="Project Settings"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </button>
+                </div>
                 <p className="text-sm text-surface-500">{project.organization?.name}</p>
               </div>
             </div>
@@ -244,7 +281,16 @@ export const ProjectPage: React.FC = () => {
         isDeleting={deletingTask}
       />
 
-      {/* Comments Section in Edit Modal - Optional Enhancement */}
+      {/* Edit Project Modal */}
+      <EditProjectModal
+        isOpen={showProjectSettings}
+        onClose={() => setShowProjectSettings(false)}
+        project={project}
+        onSave={handleSaveProject}
+        onDelete={handleDeleteProject}
+        isSaving={updatingProject}
+        isDeleting={deletingProject}
+      />
 
     </div>
   );

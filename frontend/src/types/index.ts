@@ -12,11 +12,13 @@ export interface Organization {
   id: string;
   name: string;
   slug: string;
+  uid?: string;
   contactEmail: string;
   description?: string;
   memberCount: number;
   projectCount: number;
   createdAt: string;
+  viewerRole?: 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER';
 }
 
 export interface OrganizationMember {

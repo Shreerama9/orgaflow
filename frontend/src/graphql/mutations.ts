@@ -247,3 +247,25 @@ export const CREATE_TASK_COMMENT = gql`
     }
   }
 `;
+
+export const UPDATE_TASK_COMMENT = gql`
+  ${USER_FRAGMENT}
+  mutation UpdateTaskComment($id: ID!, $content: String!) {
+    updateTaskComment(id: $id, content: $content) {
+      comment {
+        id
+        content
+        updatedAt
+      }
+      success
+    }
+  }
+`;
+
+export const DELETE_TASK_COMMENT = gql`
+  mutation DeleteTaskComment($id: ID!) {
+    deleteTaskComment(id: $id) {
+      success
+    }
+  }
+`;

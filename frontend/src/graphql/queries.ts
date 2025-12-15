@@ -23,11 +23,13 @@ export const GET_MY_ORGANIZATIONS = gql`
       id
       name
       slug
+      uid
       contactEmail
       description
       memberCount
       projectCount
       createdAt
+      viewerRole
     }
   }
 `;

@@ -39,7 +39,15 @@ class Project(models.Model):
         choices=Status.choices,
         default=Status.ACTIVE
     )
-    due_date = models.DateField(
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_projects',
+        help_text='User who created this project'
+    )
+    due_date = models.DateTimeField(
         null=True,
         blank=True,
         help_text='Project deadline'
@@ -73,10 +81,10 @@ class Project(models.Model):
         todo = tasks.filter(status=Task.Status.TODO).count()
         
         return {
-            'total': total,
-            'completed': completed,
-            'in_progress': in_progress,
-            'todo': todo,
+            'total_tasks': total,
+            'completed_tasks': completed,
+            'in_progress_tasks': in_progress,
+            'todo_tasks': todo,
             'completion_rate': (completed / total * 100) if total > 0 else 0
         }
 
