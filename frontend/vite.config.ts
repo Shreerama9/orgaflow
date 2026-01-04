@@ -17,5 +17,11 @@ export default defineConfig({
   server: {
     port: 4321,
     host: true,
+    allowedHosts: ['orgaflow.sramagency.com', 'localhost'],
+    hmr: {
+      clientPort: 443,
+      protocol: 'wss',
+      host: 'orgaflow.sramagency.com',
+    },
   },
 })
